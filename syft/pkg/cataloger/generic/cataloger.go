@@ -63,6 +63,8 @@ func (c *Cataloger) WithParserByGlobs(parser Parser, globs ...string) *Cataloger
 	c.requesters = append(c.requesters,
 		func(resolver file.Resolver, _ Environment) []request {
 			var requests []request
+			// One file can match more than one glob. Parse it once.
+			seen := make(map[file.Coordinates]struct{})
 			for _, g := range globs {
 				log.WithFields("glob", g).Trace("searching for paths matching glob")
 
@@ -71,7 +73,15 @@ func (c *Cataloger) WithParserByGlobs(parser Parser, globs ...string) *Cataloger
 					log.Debugf("unable to process glob=%q: %+v", g, err)
 					continue
 				}
-				requests = append(requests, makeRequests(parser, matches)...)
+				var unique []file.Location
+				for _, match := range matches {
+					if _, exists := seen[match.Coordinates]; exists {
+						continue
+					}
+					seen[match.Coordinates] = struct{}{}
+					unique = append(unique, match)
+				}
+				requests = append(requests, makeRequests(parser, unique)...)
 			}
 			return requests
 		},
