@@ -419,6 +419,14 @@ func Test_PackageCataloger(t *testing.T) {
 		expectedRelationships []string
 	}{
 		{
+			name:    "requirements directory",
+			fixture: "testdata/requirements-dir",
+			expectedPackages: []string{
+				"apache-airflow @ 2.9.3 (requirements/main.txt)",
+				"flask @ 2.0.3 (requirements.txt)",
+			},
+		},
+		{
 			name:    "pdm",
 			fixture: "testdata/pdm-lock",
 			expectedPackages: []string{
@@ -497,6 +505,7 @@ func Test_IndexCataloger_Globs(t *testing.T) {
 				"src/extra-requirements.txt",
 				"src/requirements-dev.txt",
 				"src/1-requirements-dev.txt",
+				"src/requirements/main.txt",
 				"src/setup.py",
 				"src/poetry.lock",
 				"src/Pipfile.lock",

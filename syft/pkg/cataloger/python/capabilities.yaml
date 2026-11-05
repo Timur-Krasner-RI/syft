@@ -243,6 +243,7 @@ catalogers:
           method: glob # AUTO-GENERATED
           criteria: # AUTO-GENERATED
             - '**/*requirements*.txt'
+            - '**/requirements/*.txt'
         metadata_types: # AUTO-GENERATED
           - pkg.PythonRequirementsEntry
         package_types: # AUTO-GENERATED

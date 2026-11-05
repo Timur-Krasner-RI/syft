@@ -19,7 +19,10 @@ func NewPackageCataloger(cfg CatalogerConfig) pkg.Cataloger {
 	pdmLockParser := newPdmLockParser(cfg)
 	requirementsFileParser := newRequirementsParser(cfg)
 	return generic.NewCataloger("python-package-cataloger").
-		WithParserByGlobs(requirementsFileParser.parseRequirementsTxt, "**/*requirements*.txt").
+		// *requirements*.txt covers requirements.txt, requirements-dev.txt, and similar names.
+		// requirements/*.txt covers pip requirement files whose names do not contain
+		// "requirements", such as requirements/main.txt.
+		WithParserByGlobs(requirementsFileParser.parseRequirementsTxt, "**/*requirements*.txt", "**/requirements/*.txt").
 		WithParserByGlobs(poetryLockParser.parsePoetryLock, "**/poetry.lock").
 		WithParserByGlobs(pipfileLockParser.parsePipfileLock, "**/Pipfile.lock").
 		WithParserByGlobs(setupFileParser.parseSetupFile, "**/setup.py").
